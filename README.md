@@ -77,6 +77,5 @@ A pre-configured `.desktop` file is included for Linux systems.
   chmod +x ~/Desktop/Configure\ HPC.desktop
   ```
 - Double-click to run the script in a terminal window.
-- The `sleep 120` ensures the terminal remains open after execution so you can read messages.
 
 ---
