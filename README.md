@@ -13,7 +13,7 @@ Install required Python package:
 pip install waldur-api-client
 ```
 
-### System dependencies (mandatory)
+### System dependencies
 
 The script relies on SSH key generation, SSH connectivity checks, and mounting the HPC home directory using SSHFS.
 
@@ -21,7 +21,7 @@ The script relies on SSH key generation, SSH connectivity checks, and mounting t
 The following tools must be available in `PATH`:
 - `ssh`
 - `ssh-keygen`
-- `sshfs`
+- `sshfs` (optional)
 
 #### Linux
 Install `sshfs` using your distribution package manager:
