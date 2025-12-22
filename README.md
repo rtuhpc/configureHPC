@@ -49,6 +49,13 @@ brew install gromgit/fuse/sshfs-mac
 
 ---
 
+## Prerequisites
+
+Before running the script, ensure:
+
+1. You have a **Waldur account** with access to a project that has an **active HPC allocatio**n.
+2. You have a valid **Waldur API token**. You can obtain the token from the User Dashboard after logging in to Waldur.
+
 ## How to run
 
 ### Option 1: From Terminal
