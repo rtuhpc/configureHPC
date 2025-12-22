@@ -1,5 +1,5 @@
 # configureHPC.py
-This script automates initial access setup to the HPC cluster via WALDUR. It generates an SSH key if needed, uploads the public key to Waldur, creates a desktop shortcut for SSH login, and mounts the user’s HPC home directory using SSHFS.
+This script automates initial access setup to the HPC cluster via WALDUR. It generates an SSH key if needed, uploads the public key to WALDUR, creates a desktop shortcut for SSH login, and mounts the user’s HPC home directory using SSHFS.
 ## Requirements
 
 ### Operating system
