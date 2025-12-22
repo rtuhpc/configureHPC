@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Configure HPC
+Comment=
+#Exec=gnome-terminal -- bash -c 'python3.9 configure_HPC_v1.1.py; exec bash'
+Exec=bash -c 'python3.9 configure_HPC_v1.1.py; sleep 120'
+Icon=
+Path=/home/user
+Terminal=true
+StartupNotify=false
