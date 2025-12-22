@@ -47,32 +47,6 @@ brew install gromgit/fuse/sshfs-mac
 
 ---
 
-## Prerequisites
-
-Before running the script, ensure:
-
-1. You have a **Waldur account** with access to the HPC project.
-2. You have a valid **Waldur API token**.
-3. Network access to the HPC login node is available.
-4. SSH access to the cluster is permitted from your network.
-
----
-
-## What the script does
-
-The script performs the following actions:
-
-1. Retrieves your user account information from Waldur.
-2. Generates an SSH key pair if one does not already exist.
-3. Uploads the public SSH key to Waldur.
-4. Waits until passwordless SSH access to the HPC cluster becomes available.
-5. Creates a desktop shortcut for SSH login to the cluster.
-6. Mounts the HPC home directory on your Desktop using **sshfs**.
-
-After successful execution, the HPC cluster is accessible both via SSH and as a mounted local directory.
-
----
-
 ## How to run
 
 ### Option 1: From Terminal
@@ -104,23 +78,3 @@ A pre-configured `.desktop` file is included for Linux systems.
 - The `sleep 120` ensures the terminal remains open after execution so you can read messages.
 
 ---
-
-## Notes
-
-- SSH output is suppressed while checking key readiness.
-- A non-zero SSH return code during synchronization means the key is **not yet active**, not that the script failed.
-- SSH key propagation on the cluster may take several minutes.
-- The script is safe to re-run if the connection is not ready on the first attempt.
-- The SSHFS mount is created at:
-  ```
-  ~/Desktop/HPC data
-  ```
-
----
-
-## Troubleshooting
-
-- If SSHFS mounting fails, ensure `sshfs` and FUSE are installed and permitted by the OS.
-- On macOS, verify macFUSE is enabled in system security settings.
-- If key synchronization fails repeatedly, re-run the script later or verify your Waldur account permissions.
-- For the desktop shortcut, make sure it is executable (`chmod +x`) and points to the correct Python version and script path.
