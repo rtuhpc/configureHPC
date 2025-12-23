@@ -180,6 +180,7 @@ def passwordless_ssh_ok(username, host):
             "ssh",
             #"-v",
             #"-i /home/user/.ssh/id_rsa",
+            "-o", "NumberOfPasswordPrompts=0",
             "-o", "BatchMode=yes",
             "-o", "ConnectTimeout=5",
             f"{username}@{host}",
