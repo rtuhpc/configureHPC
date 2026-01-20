@@ -17,6 +17,10 @@ from waldur_api_client import AuthenticatedClient
 from waldur_api_client.api.keys import keys_create, keys_list
 from waldur_api_client.api.marketplace_offering_users import marketplace_offering_users_list
 import configparser
+import platform
+
+os_name = platform.system()
+
 # from waldur_api_client.types import Response
 
 config_params = configparser.ConfigParser()
@@ -127,18 +131,35 @@ def generate_new_key(key_path):
     
     print("Key generated at:", key_path)
 
-def create_desktop_file(username, login_node, path):
-    content = f"""[Desktop Entry]
-Version=1.0
-Type=Application
-Name=SSH to HPC ({username})
-Comment=
-Exec=ssh -X {username}@{login_node}
-Icon=org.gnome.Terminal
-Path=
-Terminal=true
-StartupNotify=false
-"""
+def create_desktop_file(username, login_node, path, os_name):
+    
+
+
+    if os_name == "Linux":
+        print("Running on Linux")
+        content = f"""[Desktop Entry]
+    Version=1.0
+    Type=Application
+    Name=SSH to HPC ({username})
+    Comment=
+    Exec=ssh -X {username}@{login_node}
+    Icon=org.gnome.Terminal
+    Path=
+    Terminal=true
+    StartupNotify=false
+    """
+        
+    elif os_name == "Darwin":
+        print("Running on macOS")
+        
+        content = f"""#!/bin/zsh
+    ssh -X {username}@{login_node}
+    """
+        
+    else:
+        print(f"Running on something else: {os_name}")    
+    
+
 
     with open(path, "w") as f:
         f.write(content)
@@ -156,22 +177,30 @@ def is_mounted(path):
 def mount_HPC_folder(username,login_node, mount_dir):
 
     print("Mounting cluster directory on your Desktop...")
-    os.makedirs(mount_dir, exist_ok=True)
 
-    try:
-        if not is_mounted(mount_dir):
-            print(f"Mounting cluster directory to {mount_dir}")
-            subprocess.run([
-                "sshfs",
-                f"{username}@{login_node}:",
-                mount_dir,
-                "-o", "nonempty,reconnect"
-            ], check=True)
     
-        else:
-            print("Cluster directory already mounted")
-    except:
-        print("SSH mount not supported")
+    desktop_link=f"{homedir}/Desktop/HPC data"
+    target_dir = f"{homedir}/HPC"
+
+    os.makedirs(target_dir, exist_ok=True)
+    
+
+
+    if not os.path.islink(desktop_link) and not os.path.exists(desktop_link):
+        os.symlink(target_dir, desktop_link)
+
+
+    if not is_mounted(target_dir):
+        print(f"Mounting cluster directory to {target_dir}")
+        subprocess.run([
+            "sshfs",
+            f"{username}@{login_node}:",
+            target_dir,
+            "-o", "nonempty,reconnect"
+        ], check=True)
+
+    else:
+        print("Cluster directory already mounted")
         
 
 def passwordless_ssh_ok(username, host):
@@ -183,6 +212,7 @@ def passwordless_ssh_ok(username, host):
             "-o", "NumberOfPasswordPrompts=0",
             "-o", "BatchMode=yes",
             "-o", "ConnectTimeout=5",
+            "-o", "StrictHostKeyChecking=no",
             f"{username}@{host}",
             "true"
         ],
@@ -220,17 +250,17 @@ def main():
         print(f"Uploading new key {new_key_name} to WALDUR")
         upload_my_public_key(client, pub_key, name=new_key_name)
         
-        
+    if os_name == "Darwin":
+        desktop_filepath=f"{homedir}/Desktop/ssh-hpc.command"
+    else:
+        desktop_filepath=f"{homedir}/Desktop/ssh-hpc.desktop"
     
-    
-    desktop_filepath=f"{homedir}/Desktop/ssh-hpc.desktop"
     
     if os.path.exists(desktop_filepath):
         print(f"\nDesktop icon exists. To re-generate - DELETE {desktop_filepath}")
     else:
-        create_desktop_file(login_name, login_node, desktop_filepath)
+        create_desktop_file(login_name, login_node, desktop_filepath, os_name)
     
-    desktop_share_filepath=f"{homedir}/Desktop/HPC data"
 
     k = 0
     while not passwordless_ssh_ok(login_name, login_node):
@@ -242,7 +272,8 @@ def main():
             sys.exit(0)
 
     
-    mount_HPC_folder(login_name, login_node, desktop_share_filepath)
+    mount_HPC_folder(login_name, login_node, homedir)
+    
     print("HPC connection ready!!!")
     
     time.sleep(1)    
