@@ -196,7 +196,7 @@ def mount_HPC_folder(username,login_node, mount_dir):
             "sshfs",
             f"{username}@{login_node}:",
             target_dir,
-            "-o", "nonempty,reconnect"
+            "-o", "reconnect"
         ], check=True)
 
     else:
